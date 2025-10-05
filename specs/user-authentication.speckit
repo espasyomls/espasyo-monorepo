@@ -1,0 +1,25 @@
+# User Authentication Spec
+
+## Overview
+The user authentication system for espasyoMLS allows real estate agents and users to securely register, login, and manage their accounts.
+
+## Requirements
+- Users must be able to register with email, password, and basic profile information.
+- Passwords must be securely hashed and stored.
+- Users can login using email and password.
+- Implement JWT tokens for session management.
+- Users can logout, invalidating their session.
+- Password reset functionality via email.
+- Role-based access: agents, admins, regular users.
+
+## API Endpoints
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
+- POST /auth/reset-password
+
+## Security
+- Use HTTPS for all communications.
+- Implement rate limiting on auth endpoints.
+- Validate input data.
+- Use secure password policies.
