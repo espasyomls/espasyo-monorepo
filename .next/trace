@@ -1,2 +1,4 @@
 [{"name":"next-dev","duration":470387,"timestamp":20213055111,"id":1,"tags":{},"startTime":1758468893135,"traceId":"8d34eea1b447be0a"}]
 [{"name":"next-dev","duration":495325,"timestamp":20760901311,"id":1,"tags":{},"startTime":1758469440981,"traceId":"6624c8ed7d23c962"}]
+[{"name":"next-dev","duration":842500,"timestamp":31465591961,"id":1,"tags":{},"startTime":1759714123581,"traceId":"515fe0a117512a65"}]
+[{"name":"generate-buildid","duration":158,"timestamp":32275879305,"id":4,"parentId":1,"tags":{},"startTime":1759714933869,"traceId":"aa5be5a0bf18fe14"},{"name":"load-custom-routes","duration":230,"timestamp":32275879538,"id":5,"parentId":1,"tags":{},"startTime":1759714933869,"traceId":"aa5be5a0bf18fe14"},{"name":"next-build","duration":75380,"timestamp":32275805664,"id":1,"tags":{"buildMode":"default","isTurboBuild":"false","version":"15.5.4"},"startTime":1759714933795,"traceId":"aa5be5a0bf18fe14"}]
