@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: Dashboard API
+  version: 1.0.0
+  description: API contracts for role-based dashboard functionality
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.espasyomls.com/api
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /dashboard/{role}:
+    get:
+      summary: Get dashboard data for specific role
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [admin, agent, user]
+      responses:
+        '200':
+          description: Dashboard data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+        '401':
+          description: Unauthorized access
+        '403':
+          description: Insufficient permissions
+
+  /dashboard/{role}/metrics:
+    get:
+      summary: Get dashboard metrics for specific role
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [admin, agent, user]
+      responses:
+        '200':
+          description: Metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+
+  /user/role:
+    get:
+      summary: Get current user's role information
+      responses:
+        '200':
+          description: Role information retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRoleResponse'
+    put:
+      summary: Update user role (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleUpdateRequest'
+      responses:
+        '200':
+          description: Role updated successfully
+        '403':
+          description: Insufficient permissions
+
+  /user/preferences:
+    get:
+      summary: Get user dashboard preferences
+      responses:
+        '200':
+          description: Preferences retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+    put:
+      summary: Update user dashboard preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferencesUpdateRequest'
+      responses:
+        '200':
+          description: Preferences updated successfully
+
+components:
+  schemas:
+    DashboardResponse:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [admin, agent, user]
+        title:
+          type: string
+        widgets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardWidget'
+        navigation:
+          type: array
+          items:
+            $ref: '#/components/schemas/NavigationItem'
+        metrics:
+          $ref: '#/components/schemas/DashboardMetrics'
+
+    DashboardWidget:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [metric, chart, list, action]
+        title:
+          type: string
+        position:
+          $ref: '#/components/schemas/WidgetPosition'
+        config:
+          type: object
+        required:
+          type: boolean
+          default: false
+
+    WidgetPosition:
+      type: object
+      properties:
+        x:
+          type: integer
+          minimum: 0
+        y:
+          type: integer
+          minimum: 0
+        width:
+          type: integer
+          minimum: 1
+        height:
+          type: integer
+          minimum: 1
+
+    NavigationItem:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        path:
+          type: string
+        icon:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/NavigationItem'
+        required:
+          type: boolean
+          default: false
+
+    DashboardMetrics:
+      type: object
+      properties:
+        totalUsers:
+          $ref: '#/components/schemas/Metric'  # Admin only
+        activeListings:
+          $ref: '#/components/schemas/Metric'  # Agent/Admin
+        savedSearches:
+          $ref: '#/components/schemas/Metric'  # User/Agent
+        commissionEarned:
+          $ref: '#/components/schemas/Metric'  # Agent only
+
+    Metric:
+      type: object
+      properties:
+        value:
+          oneOf:
+            - type: number
+            - type: string
+        trend:
+          type: string
+          enum: [up, down, neutral]
+        format:
+          type: string
+          enum: [number, currency, percentage]
+        timeframe:
+          type: string
+
+    UserRoleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        dashboardPath:
+          type: string
+        description:
+          type: string
+
+    RoleUpdateRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        newRole:
+          type: string
+          enum: [admin, agent, user]
+        reason:
+          type: string
+
+    PreferencesResponse:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, system]
+        language:
+          type: string
+        notifications:
+          type: boolean
+        dashboardLayout:
+          type: string
+          enum: [grid, list]
+        itemsPerPage:
+          type: integer
+          minimum: 5
+          maximum: 100
+
+    PreferencesUpdateRequest:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, system]
+        language:
+          type: string
+        notifications:
+          type: boolean
+        dashboardLayout:
+          type: string
+          enum: [grid, list]
+        itemsPerPage:
+          type: integer
+          minimum: 5
+          maximum: 100
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
