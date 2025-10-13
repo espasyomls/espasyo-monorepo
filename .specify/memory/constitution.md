@@ -59,15 +59,17 @@ LocalStack for AWS service emulation in local development
 Infrastructure as Code: Terraform
 CI/CD: GitHub Actions
 Schema validation: spec-kit
-Frontend:
+Frontend:Mobile browser 99% compatibility
 
 Framework: Next.js (App Router)
 Language: TypeScript
 UI Components: shadcn/ui (for all components, themes, and styling)
-Styling: TailwindCSS
+Styling: TailwindCSS, Glassmorphism, 
+Animations: Framer Motion (whenever applicable)
 State Management: Zustand
 No use of Radix or other UI libraries unless explicitly approved
-Other:
+Testing: Vitest
+Other: Lightmode as default with Drakmode option, and Jony Ive design principles
 
 All documentation is in Markdown and maintained in espasyo-docs
 All contributors must ensure compatibility with this stack
