@@ -1,50 +1,135 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+
+Version change: 1.0.0 → 1.1.0
+
+List of modified principles: Added Principle 13 (Six Sigma Quality Standard)
+
+Added sections: none
+
+Removed sections: none
+
+Templates requiring updates: none
+
+Follow-up TODOs: none
+-->
+
+# EspasyoMLS Constitution
+
+## Project Overview
+
+EspasyoMLS is a comprehensive real estate listing and management platform inspired by housesigma.com, adapted and tailored for the Philippine market. The project aims to provide a modern, scalable, and efficient solution for property search, listing management, agent workflows, and related real estate services, leveraging best practices in software architecture and cloud-native development.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### 1. Domain-Driven Organization
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+EspasyoMLS is organized into clear domains (backend, frontend, infrastructure, etc.), each with its own .specify folder containing templates, schemas, and this constitution. All repositories and subprojects within a domain must follow these shared standards.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### 2. Specification-First Development
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Every new feature, change, or task begins with a specification document, using the templates and schemas defined in the domain's .specify folder. No implementation starts without an approved, validated spec.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### 3. Schema Validation
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+All specification files (YAML, JSON, Markdown) are validated against schemas provided in .specify using spec-kit. This ensures documentation and plans are always structured, complete, and machine-checked.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### 4. Separation of Concerns
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Each repository or microservice is responsible for its own implementation, but must always align with the domain's constitution and templates.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### 5. Documentation and Transparency
+
+All major architectural decisions, workflows, and processes are documented and accessible in espasyo-docs. Transparency and clear communication are core values.
+
+### 6. Complete Tech Stack
+
+The EspasyoMLS project uses the following technologies and practices, as documented:
+
+Backend:
+
+Language: Go (Golang)
+Microservices architecture (see microservices.txt and service-specific docs)
+Database: PostgreSQL
+Cache: Redis
+Containerization: Docker (all services must run in containers for local development)
+Local orchestration: Docker Compose
+AWS for production deployment, with cost-effectiveness as a guiding principle
+LocalStack for AWS service emulation in local development
+Infrastructure as Code: Terraform
+CI/CD: GitHub Actions
+Schema validation: spec-kit
+Frontend:Mobile browser 99% compatibility
+
+Framework: Next.js (App Router)
+Language: TypeScript
+UI Components: shadcn/ui (for all components, themes, and styling)
+Styling: TailwindCSS, Glassmorphism, 
+Animations: Framer Motion (whenever applicable)
+State Management: Zustand
+No use of Radix or other UI libraries unless explicitly approved
+Testing: Vitest
+Other: Lightmode as default with Drakmode option, and Jony Ive design principles
+
+All documentation is in Markdown and maintained in espasyo-docs
+All contributors must ensure compatibility with this stack
+
+### 7. AWS & Cost Optimization Principles
+
+All deployments and infrastructure choices must prioritize cost-effectiveness within AWS.
+Use managed AWS services (e.g., RDS, ElastiCache, S3) where they reduce operational overhead and cost.
+Regularly review AWS usage and billing to identify and eliminate unnecessary expenses.
+Prefer serverless or on-demand resources where appropriate to minimize idle costs.
+
+### 8. Local Development Principle
+
+Every service and component must be fully runnable in local development using Docker containers.
+AWS services must be mimicked locally using LocalStack, and this setup must be maintained and tested as part of the development workflow.
+
+### 9. Troubleshooting Philosophy and LLM Guard Rails
+
+Always seek to understand the root cause before proposing solutions.
+Avoid quick, surface-level fixes ("knee-jerk reflexes").
+Consult logs, documentation, and relevant specs before making changes.
+Document the reasoning behind any fix or suggestion.
+Prefer solutions that align with project architecture and the documented tech stack.
+All contributors and AI assistants must follow these guidelines to ensure robust, maintainable solutions.
+
+### 10. Amendment Process
+
+Any changes to this constitution or the templates must be proposed, reviewed, and approved according to our governance workflow.
+When the constitution or templates change, all dependent specs and plans must be updated to stay in sync.
+
+### 11. Governance
+
+Domain leads are responsible for maintaining the constitution and templates.
+Amendments require consensus among domain leads and affected contributors.
+Every contributor is expected to understand and follow this constitution.
+
+### 12. Workflow Summary
+
+All work starts with a spec, plan, or task list using the provided templates.
+Specs and plans are validated before implementation.
+Implementation references the relevant specs.
+All changes are peer-reviewed for compliance with this constitution.
+
+### 13. Six Sigma Quality Standard
+
+All code and features must achieve Six Sigma quality levels (3.4 defects per million opportunities). This means:
+- 100% test coverage for all implemented functionality
+- Zero failing tests in the test suite
+- All TDD placeholders must be replaced with actual implementations
+- Iterative fix/test cycles until perfection is achieved
+- No shortcuts or compromises on quality
+- Every feature must be production-ready and bulletproof
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Amendment procedure: Any changes to this constitution or the templates must be proposed, reviewed, and approved according to our governance workflow. When the constitution or templates change, all dependent specs and plans must be updated to stay in sync.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Versioning policy: Constitution version follows semantic versioning: MAJOR for backward incompatible governance/principle removals or redefinitions, MINOR for new principle/section added or materially expanded guidance, PATCH for clarifications, wording, typo fixes, non-semantic refinements.
+
+Compliance review expectations: All PRs/reviews must verify compliance; Complexity must be justified; Use guidance for runtime development guidance.
+
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE): Original adoption date unknown, set to 2025-10-03 | **Last Amended**: 2025-10-05

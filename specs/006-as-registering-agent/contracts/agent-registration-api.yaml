@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Agent Registration API
+  version: 1.0.0
+  description: API for agent registration via Google OAuth
+
+paths:
+  /api/auth/signin/google:
+    post:
+      summary: Initiate Google OAuth sign-in for agent registration
+      description: Redirects to Google OAuth consent screen for authentication
+      tags:
+        - Authentication
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                callbackUrl:
+                  type: string
+                  example: "/dashboard/agent"
+                  description: Where to redirect after successful OAuth
+      responses:
+        '302':
+          description: Redirect to Google OAuth
+          headers:
+            Location:
+              schema:
+                type: string
+                example: "https://accounts.google.com/o/oauth2/v2/auth?..."
+        '500':
+          description: OAuth configuration error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/callback/google:
+    get:
+      summary: Google OAuth callback handler
+      description: Handles OAuth callback from Google, creates or updates user
+      tags:
+        - Authentication
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Google
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+          description: State parameter for CSRF protection
+      responses:
+        '302':
+          description: Redirect to agent dashboard with session
+          headers:
+            Location:
+              schema:
+                type: string
+                example: "/dashboard/agent"
+            Set-Cookie:
+              schema:
+                type: string
+                example: "next-auth.session-token=...; Path=/; HttpOnly; Secure"
+        '400':
+          description: Invalid OAuth parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: OAuth authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/agent/register:
+    post:
+      summary: Complete agent registration after OAuth
+      description: Creates agent profile with role assignment
+      tags:
+        - Registration
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - acceptTerms
+              properties:
+                acceptTerms:
+                  type: boolean
+                  example: true
+      responses:
+        '201':
+          description: Agent successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  agentId:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  profileId:
+                    type: string
+                    format: uuid
+                  verificationStatus:
+                    type: string
+                    enum: [pending]
+                    example: "pending"
+        '400':
+          description: Invalid request or user already registered as agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already registered as agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Authentication failed"
+        code:
+          type: string
+          example: "AUTH_FAILED"
+        details:
+          type: object
+          additionalProperties: true
+
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token
+      description: NextAuth.js session cookie

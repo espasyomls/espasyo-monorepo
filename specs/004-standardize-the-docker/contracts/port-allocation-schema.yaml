@@ -1,0 +1,121 @@
+# Port Allocation Schema Contract
+
+## Overview
+This contract defines the schema for Docker port allocations across the Espasyo MLS project.
+
+## Port Block Definitions
+
+### Schema
+```yaml
+port_blocks:
+  - name: string          # Service category name
+    range_start: integer  # Starting port number
+    range_end: integer    # Ending port number
+    description: string   # Purpose description
+    max_services: integer # Maximum recommended services
+    reserved_ports:       # Special purpose ports
+      - port: integer
+        purpose: string
+```
+
+### Current Allocations
+```yaml
+port_blocks:
+  - name: frontend
+    range_start: 3000
+    range_end: 3999
+    description: User-facing web applications
+    max_services: 50
+    reserved_ports:
+      - port: 3000
+        purpose: Primary frontend application
+
+  - name: microservices
+    range_start: 4000
+    range_end: 4999
+    description: Business logic microservices
+    max_services: 100
+    reserved_ports: []
+
+  - name: edsl
+    range_start: 5000
+    range_end: 5999
+    description: Extensible Digital Service Layer
+    max_services: 20
+    reserved_ports:
+      - port: 5000
+        purpose: eDSL gateway
+
+  - name: monitoring
+    range_start: 6000
+    range_end: 6999
+    description: Observability and monitoring services
+    max_services: 15
+    reserved_ports:
+      - port: 6001
+        purpose: Grafana dashboard
+
+  - name: aws_services
+    range_start: 7000
+    range_end: 7999
+    description: AWS service emulations (LocalStack)
+    max_services: 10
+    reserved_ports:
+      - port: 4566
+        purpose: LocalStack gateway
+
+  - name: databases
+    range_start: 8000
+    range_end: 8999
+    description: Database and data storage services
+    max_services: 10
+    reserved_ports:
+      - port: 5432
+        purpose: PostgreSQL (internal)
+      - port: 6379
+        purpose: Redis (internal)
+
+  - name: development_tools
+    range_start: 9000
+    range_end: 9999
+    description: Development and testing tools
+    max_services: 10
+    reserved_ports:
+      - port: 5050
+        purpose: pgAdmin
+
+  - name: infrastructure
+    range_start: 2000
+    range_end: 2999
+    description: Core infrastructure services
+    max_services: 20
+    reserved_ports: []
+```
+
+## Validation Contract
+
+### Port Block Validation
+- **Input**: port_block object
+- **Output**: validation_result boolean
+- **Rules**:
+  - range_start < range_end
+  - range_end - range_start >= 100
+  - range_start >= 1024
+  - range_end <= 65535
+  - No overlap with other blocks
+
+### Service Assignment Validation
+- **Input**: service_name, requested_port, category
+- **Output**: assignment_result boolean
+- **Rules**:
+  - requested_port within category block range
+  - requested_port not already assigned
+  - service belongs to declared category
+
+### Conflict Detection Contract
+- **Input**: port_assignments array
+- **Output**: conflicts array
+- **Rules**:
+  - Identify duplicate ports
+  - Flag ports outside assigned ranges
+  - Report services using wrong category ports
