@@ -1,0 +1,215 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  version: 1.0.0
+  description: API for user profile management
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+paths:
+  /users/{id}:
+    get:
+      summary: Get user profile by ID
+      description: Retrieve user profile information by user ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: User ID to retrieve profile for
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid user ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/by-email/{email}:
+    get:
+      summary: Get user profile by email
+      description: Retrieve user profile information by email address
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+          description: Email address to retrieve profile for
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid email format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - role
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User unique identifier
+        email:
+          type: string
+          format: email
+          description: User email address
+        firstName:
+          type: string
+          maxLength: 100
+          description: User first name
+        lastName:
+          type: string
+          maxLength: 100
+          description: User last name
+        role:
+          type: string
+          enum: [AGENT, ADMIN, USER]
+          description: User role
+        isEmailVerified:
+          type: boolean
+          default: false
+          description: Email verification status
+        isMobileVerified:
+          type: boolean
+          default: false
+          description: Mobile verification status
+        addressBarangay:
+          type: string
+          description: Address barangay
+        addressCityMunicipality:
+          type: string
+          description: Address city/municipality
+        addressProvince:
+          type: string
+          description: Address province
+        addressCountry:
+          type: string
+          default: "Philippines"
+          description: Address country
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              example: "Invalid input parameters"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

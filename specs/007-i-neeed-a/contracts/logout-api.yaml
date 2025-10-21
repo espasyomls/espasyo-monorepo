@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Logout API Contract
+  description: API contract for user logout functionality
+  version: 1.0.0
+  contact:
+    name: EspasyoMLS Team
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+  - url: https://api.espasyo.com
+    description: Production server
+
+paths:
+  /auth/logout:
+    post:
+      summary: Logout user
+      description: Terminates the user's session by invalidating tokens server-side and cleaning up client-side storage
+      operationId: logoutUser
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Logged out successfully"
+                  redirectUrl:
+                    type: string
+                    example: "/auth/login"
+                required:
+                  - success
+                  - message
+        '401':
+          description: Unauthorized - invalid or missing token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+                  message:
+                    type: string
+                    example: "Invalid authentication token"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+                  message:
+                    type: string
+                    example: "Failed to logout"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LogoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        redirectUrl:
+          type: string
+      required:
+        - success
+        - message
